@@ -25,9 +25,9 @@ router.get("/:curriculumId", getCurriculum);
 router.get("/", getCurricula);
 
 // Resource management
-router.post("/:curriculumId/createResource", createResource);
-router.put("/:resourceId/updateResource", updateResource);
-router.delete("/:resourceId/deleteResource", deleteResource);
-router.get("/:resourceId", getResource);
+router.post("/resource/:curriculumId/createResource", createResource);
+router.put("/resource/:resourceId/updateResource", updateResource);
+router.delete("/resource/:resourceId/deleteResource", deleteResource);
+router.get("/resource/:resourceId", getResource);
 
 module.exports = router;
