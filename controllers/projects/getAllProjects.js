@@ -14,15 +14,14 @@ const getAllProjects = async (req, res) => {
             curriculum: { $in: curriculumIds }
         }).populate('curriculum', 'name');
 
-        res.status(200).json({
-            success: true,
-            data: projects
-        });
+        if (!projects || projects.length === 0) {
+            return res.status(404).json({ message: "No projects found" });
+        }
+
+        res.status(200).json({ projects });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
+        console.error("Get projects error:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 };
 
