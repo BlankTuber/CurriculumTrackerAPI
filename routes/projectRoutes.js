@@ -25,12 +25,12 @@ router.get("/:projectId", getProject);
 router.get("/", getAllProjects);
 
 // Project resource management
-router.post("/:projectId/createProjectResource", createProjectResource);
-router.put("/:projectResourceId/updateProjectResource", updateProjectResource);
+router.post("/resource/:projectId/createProjectResource", createProjectResource);
+router.put("/resource/:projectResourceId/updateProjectResource", updateProjectResource);
 router.delete(
-    "/:projectResourceId/deleteProjectResource",
+    "/resource/:projectResourceId/deleteProjectResource",
     deleteProjectResource
 );
-router.get("/:projectResourceId", getProjectResource);
+router.get("/resource/:projectResourceId", getProjectResource);
 
 module.exports = router;
