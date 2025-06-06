@@ -9,6 +9,7 @@ const createResource = require("../controllers/curricula/createResource");
 const updateResource = require("../controllers/curricula/updateResource");
 const deleteResource = require("../controllers/curricula/deleteResource");
 const getCurriculum = require("../controllers/curricula/getCurriculum");
+const getCurricula = require("../controllers/curricula/getCurricula");
 const getResource = require("../controllers/curricula/getResource");
 
 const router = express.Router();
@@ -21,6 +22,7 @@ router.post("/createCurriculum", createCurriculum);
 router.put("/:curriculumId/updateCurriculum", updateCurriculum);
 router.delete("/:curriculumId/deleteCurriculum", deleteCurriculum);
 router.get("/:curriculumId", getCurriculum);
+router.get("/", getCurricula);
 
 // Resource management
 router.post("/:curriculumId/createResource", createResource);
