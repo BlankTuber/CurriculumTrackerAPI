@@ -1,6 +1,6 @@
 const Curriculum = require("../../models/Curriculum");
 
-const getCurriculua = async (req, res) => {
+const getCurricula = async (req, res) => {
     try {
         const userId = req.user._id;
 
@@ -23,4 +23,4 @@ const getCurriculua = async (req, res) => {
     }
 };
 
-module.exports = getCurriculua;
+module.exports = getCurricula;
