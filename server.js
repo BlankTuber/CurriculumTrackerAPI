@@ -15,6 +15,8 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use("view engine", "ejs");
 
 // Session configuration
 app.use(
