@@ -7,6 +7,7 @@ const config = {
         process.env.MONGODB_URI ||
         "mongodb://localhost:27017/curriculum-manager",
     SESSION_SECRET: process.env.SESSION_SECRET || "fallback-secret-change-this",
+    CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
 };
 
 // Validate required environment variables in production

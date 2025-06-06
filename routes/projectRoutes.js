@@ -10,6 +10,7 @@ const updateProjectResource = require("../controllers/projects/updateProjectReso
 const deleteProjectResource = require("../controllers/projects/deleteProjectResource");
 const getProject = require("../controllers/projects/getProject");
 const getProjectResource = require("../controllers/projects/getProjectResource");
+const getAllProjects = require("../controllers/projects/getAllProjects");
 
 const router = express.Router();
 
@@ -21,6 +22,7 @@ router.post("/:curriculumId/createProject", createProject);
 router.put("/:projectId/updateProject", updateProject);
 router.delete("/:projectId/deleteProject", deleteProject);
 router.get("/:projectId", getProject);
+router.get("/", getAllProjects);
 
 // Project resource management
 router.post("/:projectId/createProjectResource", createProjectResource);
