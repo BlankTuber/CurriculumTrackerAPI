@@ -244,6 +244,8 @@ Get all curricula for authenticated user.
           "name": "project name",
           "description": "description",
           "githubLink": "url",
+          "completed": false,
+          "order": 1,
           "createdAt": "timestamp",
           "updatedAt": "timestamp"
         }
@@ -438,6 +440,8 @@ Create a new project in a curriculum.
     "name": "string (required, max 100 chars)",
     "description": "string (required, max 2000 chars)",
     "githubLink": "valid GitHub URL (required)",
+    "order": "number (optional, auto-assigned if not provided)",
+    "prerequisites": ["project_id_1", "project_id_2"],
     "projectResources": [
         {
             "name": "string",
@@ -458,6 +462,9 @@ Create a new project in a curriculum.
     "name": "project name",
     "description": "description",
     "githubLink": "github url",
+    "completed": false,
+    "order": 1,
+    "prerequisites": [],
     "curriculum": "curriculum_id",
     "projectResources": [...],
     "notes": []
@@ -469,7 +476,7 @@ Create a new project in a curriculum.
 
 ### Get All Projects
 
-Get all projects across all user's curricula.
+Get all projects across all user's curricula, sorted by order.
 
 **Endpoint:** `GET /projects`  
 **Authentication:** Required
@@ -484,6 +491,16 @@ Get all projects across all user's curricula.
             "name": "project name",
             "description": "description",
             "githubLink": "url",
+            "completed": false,
+            "order": 1,
+            "prerequisites": [
+                {
+                    "_id": "prerequisite_id",
+                    "name": "prerequisite name",
+                    "description": "description",
+                    "completed": true
+                }
+            ],
             "curriculum": {
                 "_id": "curriculum_id",
                 "name": "curriculum name"
@@ -497,7 +514,7 @@ Get all projects across all user's curricula.
 
 ### Get Single Project
 
-Get specific project with notes.
+Get specific project with notes and prerequisites.
 
 **Endpoint:** `GET /projects/:projectId`  
 **Authentication:** Required
@@ -511,11 +528,21 @@ Get specific project with notes.
     "name": "project name",
     "description": "description",
     "githubLink": "url",
+    "completed": false,
+    "order": 1,
     "curriculum": {
       "_id": "curriculum_id",
       "name": "curriculum name",
       "owner": "user_id"
     },
+    "prerequisites": [
+      {
+        "_id": "prerequisite_id",
+        "name": "prerequisite name",
+        "description": "description",
+        "completed": true
+      }
+    ],
     "projectResources": [...],
     "notes": [
       {
@@ -545,7 +572,10 @@ Update project details.
 {
     "name": "new name (optional)",
     "description": "new description (optional)",
-    "githubLink": "new github URL (optional)"
+    "githubLink": "new github URL (optional)",
+    "completed": "boolean (optional)",
+    "order": "number (optional)",
+    "prerequisites": ["project_id_1", "project_id_2"]
 }
 ```
 
@@ -868,3 +898,7 @@ Check if API is running.
 3. **Object ID Validation**: All route parameters that expect MongoDB ObjectIds are validated using middleware. Invalid ObjectId formats will return a 400 error.
 
 4. **Cascading Deletes**: When deleting users, curricula, or projects, all associated data is automatically deleted to maintain referential integrity.
+
+5. **Project Ordering**: Projects are automatically assigned an order when created. If no order is specified, it will be set to the next available number. Projects are returned sorted by order.
+
+6. **Prerequisites**: Prerequisites must reference valid projects that belong to curricula owned by the same user. The API validates prerequisite access but does not prevent circular dependencies.

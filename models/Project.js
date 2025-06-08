@@ -69,6 +69,20 @@ const projectSchema = new mongoose.Schema(
                 message: "Please provide a valid GitHub URL",
             },
         },
+        completed: {
+            type: Boolean,
+            default: false,
+        },
+        order: {
+            type: Number,
+            default: 0,
+        },
+        prerequisites: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Project",
+            },
+        ],
         curriculum: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Curriculum",

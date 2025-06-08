@@ -5,14 +5,17 @@ const getAllProjects = async (req, res) => {
     try {
         // Get all curricula owned by the user
         const userCurricula = await Curriculum.find({ owner: req.user._id });
-        
+
         // Extract curriculum IDs
-        const curriculumIds = userCurricula.map(curriculum => curriculum._id);
-        
+        const curriculumIds = userCurricula.map((curriculum) => curriculum._id);
+
         // Find all projects associated with these curricula
         const projects = await Project.find({
-            curriculum: { $in: curriculumIds }
-        }).populate('curriculum', 'name');
+            curriculum: { $in: curriculumIds },
+        })
+            .populate("curriculum", "name")
+            .populate("prerequisites", "name description completed")
+            .sort({ order: 1 });
 
         if (!projects || projects.length === 0) {
             return res.status(404).json({ message: "No projects found" });
@@ -26,4 +29,3 @@ const getAllProjects = async (req, res) => {
 };
 
 module.exports = getAllProjects;
-
