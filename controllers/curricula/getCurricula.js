@@ -9,7 +9,7 @@ const getCurricula = async (req, res) => {
             owner: userId,
         }).populate({
             path: "projects",
-            select: "name description githubLink createdAt updatedAt",
+            select: "name description githubLink completed createdAt updatedAt",
         });
 
         if (!curricula || curricula.length === 0) {
