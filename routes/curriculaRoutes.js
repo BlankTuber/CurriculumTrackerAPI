@@ -1,5 +1,6 @@
 const express = require("express");
 const authenticateUser = require("../middleware/authenticateUser");
+const { validateObjectIds } = require("../utils/validateObjectIds");
 
 // Import controllers
 const createCurriculum = require("../controllers/curricula/createCurriculum");
@@ -17,17 +18,41 @@ const router = express.Router();
 // All curricula routes require authentication
 router.use(authenticateUser);
 
-// Curriculum management
-router.post("/createCurriculum", createCurriculum);
-router.put("/:curriculumId/updateCurriculum", updateCurriculum);
-router.delete("/:curriculumId/deleteCurriculum", deleteCurriculum);
-router.get("/:curriculumId", getCurriculum);
-router.get("/", getCurricula);
+// RESOURCE ROUTES
+router.post(
+    "/resource/:curriculumId/createResource",
+    validateObjectIds("curriculumId"),
+    createResource
+);
+router.put(
+    "/resource/:resourceId/updateResource",
+    validateObjectIds("resourceId"),
+    updateResource
+);
+router.delete(
+    "/resource/:resourceId/deleteResource",
+    validateObjectIds("resourceId"),
+    deleteResource
+);
+router.get(
+    "/resource/:resourceId",
+    validateObjectIds("resourceId"),
+    getResource
+);
 
-// Resource management
-router.post("/resource/:curriculumId/createResource", createResource);
-router.put("/resource/:resourceId/updateResource", updateResource);
-router.delete("/resource/:resourceId/deleteResource", deleteResource);
-router.get("/resource/:resourceId", getResource);
+// CURRICULUM ROUTES
+router.post("/createCurriculum", createCurriculum);
+router.put(
+    "/:curriculumId/updateCurriculum",
+    validateObjectIds("curriculumId"),
+    updateCurriculum
+);
+router.delete(
+    "/:curriculumId/deleteCurriculum",
+    validateObjectIds("curriculumId"),
+    deleteCurriculum
+);
+router.get("/", getCurricula);
+router.get("/:curriculumId", validateObjectIds("curriculumId"), getCurriculum);
 
 module.exports = router;

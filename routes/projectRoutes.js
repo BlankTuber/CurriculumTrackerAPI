@@ -1,5 +1,6 @@
 const express = require("express");
 const authenticateUser = require("../middleware/authenticateUser");
+const { validateObjectIds } = require("../utils/validateObjectIds");
 
 // Import controllers
 const createProject = require("../controllers/projects/createProject");
@@ -17,20 +18,45 @@ const router = express.Router();
 // All project routes require authentication
 router.use(authenticateUser);
 
-// Project management
-router.post("/:curriculumId/createProject", createProject);
-router.put("/:projectId/updateProject", updateProject);
-router.delete("/:projectId/deleteProject", deleteProject);
-router.get("/:projectId", getProject);
-router.get("/", getAllProjects);
-
-// Project resource management
-router.post("/resource/:projectId/createProjectResource", createProjectResource);
-router.put("/resource/:projectResourceId/updateProjectResource", updateProjectResource);
+// PROJECT RESOURCE ROUTES
+router.post(
+    "/resource/:projectId/createProjectResource",
+    validateObjectIds("projectId"),
+    createProjectResource
+);
+router.put(
+    "/resource/:projectResourceId/updateProjectResource",
+    validateObjectIds("projectResourceId"),
+    updateProjectResource
+);
 router.delete(
     "/resource/:projectResourceId/deleteProjectResource",
+    validateObjectIds("projectResourceId"),
     deleteProjectResource
 );
-router.get("/resource/:projectResourceId", getProjectResource);
+router.get(
+    "/resource/:projectResourceId",
+    validateObjectIds("projectResourceId"),
+    getProjectResource
+);
+
+// PROJECT ROUTES
+router.post(
+    "/:curriculumId/createProject",
+    validateObjectIds("curriculumId"),
+    createProject
+);
+router.put(
+    "/:projectId/updateProject",
+    validateObjectIds("projectId"),
+    updateProject
+);
+router.delete(
+    "/:projectId/deleteProject",
+    validateObjectIds("projectId"),
+    deleteProject
+);
+router.get("/", getAllProjects);
+router.get("/:projectId", validateObjectIds("projectId"), getProject);
 
 module.exports = router;
