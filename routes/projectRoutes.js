@@ -2,7 +2,6 @@ const express = require("express");
 const authenticateUser = require("../middleware/authenticateUser");
 const { validateObjectIds } = require("../utils/validateObjectIds");
 
-// Import controllers
 const createProject = require("../controllers/projects/createProject");
 const updateProject = require("../controllers/projects/updateProject");
 const deleteProject = require("../controllers/projects/deleteProject");
@@ -12,13 +11,12 @@ const deleteProjectResource = require("../controllers/projects/deleteProjectReso
 const getProject = require("../controllers/projects/getProject");
 const getProjectResource = require("../controllers/projects/getProjectResource");
 const getAllProjects = require("../controllers/projects/getAllProjects");
+const getProjectsByStage = require("../controllers/projects/getProjectsByStage");
 
 const router = express.Router();
 
-// All project routes require authentication
 router.use(authenticateUser);
 
-// PROJECT RESOURCE ROUTES
 router.post(
     "/resource/:projectId/createProjectResource",
     validateObjectIds("projectId"),
@@ -40,7 +38,6 @@ router.get(
     getProjectResource
 );
 
-// PROJECT ROUTES
 router.post(
     "/:curriculumId/createProject",
     validateObjectIds("curriculumId"),
@@ -55,6 +52,11 @@ router.delete(
     "/:projectId/deleteProject",
     validateObjectIds("projectId"),
     deleteProject
+);
+router.get(
+    "/curriculum/:curriculumId/stage",
+    validateObjectIds("curriculumId"),
+    getProjectsByStage
 );
 router.get("/", getAllProjects);
 router.get("/:projectId", validateObjectIds("projectId"), getProject);

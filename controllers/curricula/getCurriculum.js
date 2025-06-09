@@ -5,13 +5,12 @@ const getCurriculum = async (req, res) => {
         const userId = req.user._id;
         const { curriculumId } = req.params;
 
-        // Find curriculum and verify ownership
         const curriculum = await Curriculum.findOne({
             _id: curriculumId,
             owner: userId,
         }).populate({
             path: "projects",
-            select: "name description githubLink completed createdAt updatedAt",
+            select: "name description githubLink completed stage order createdAt updatedAt",
         });
 
         if (!curriculum) {

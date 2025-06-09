@@ -77,6 +77,11 @@ const projectSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        stage: {
+            type: Number,
+            required: [true, "Stage is required"],
+            min: [1, "Stage must be at least 1"],
+        },
         prerequisites: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -100,5 +105,9 @@ const projectSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+
+projectSchema.index({ stage: 1 });
+projectSchema.index({ order: 1 });
+projectSchema.index({ curriculum: 1, stage: 1 });
 
 module.exports = mongoose.model("Project", projectSchema);

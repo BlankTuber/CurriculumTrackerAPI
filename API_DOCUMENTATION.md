@@ -205,17 +205,27 @@ Create a new curriculum.
 
 ```json
 {
-  "message": "Curriculum created successfully",
-  "curriculum": {
-    "_id": "curriculum_id",
-    "name": "curriculum name",
-    "description": "description",
-    "owner": "user_id",
-    "resources": [...],
-    "projects": [],
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
+    "message": "Curriculum created successfully",
+    "curriculum": {
+        "_id": "curriculum_id",
+        "name": "curriculum name",
+        "description": "description",
+        "owner": "user_id",
+        "resources": [
+            {
+                "_id": "resource_id",
+                "name": "resource name",
+                "type": "documentation",
+                "link": "https://example.com",
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
+        "levels": [],
+        "projects": [],
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -232,26 +242,51 @@ Get all curricula for authenticated user.
 
 ```json
 {
-  "curricula": [
-    {
-      "_id": "curriculum_id",
-      "name": "curriculum name",
-      "description": "description",
-      "resources": [...],
-      "projects": [
+    "curricula": [
         {
-          "_id": "project_id",
-          "name": "project name",
-          "description": "description",
-          "githubLink": "url",
-          "completed": false,
-          "order": 1,
-          "createdAt": "timestamp",
-          "updatedAt": "timestamp"
+            "_id": "curriculum_id",
+            "name": "curriculum name",
+            "description": "description",
+            "owner": "user_id",
+            "resources": [
+                {
+                    "_id": "resource_id",
+                    "name": "resource name",
+                    "type": "documentation",
+                    "link": "https://example.com",
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
+            "levels": [
+                {
+                    "_id": "level_id",
+                    "name": "The Roots",
+                    "description": "Foundation concepts",
+                    "stageStart": 1,
+                    "stageEnd": 5,
+                    "order": 1,
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
+            "projects": [
+                {
+                    "_id": "project_id",
+                    "name": "project name",
+                    "description": "description",
+                    "githubLink": "https://github.com/user/repo",
+                    "completed": false,
+                    "stage": 1,
+                    "order": 1,
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
+            "createdAt": "timestamp",
+            "updatedAt": "timestamp"
         }
-      ]
-    }
-  ]
+    ]
 }
 ```
 
@@ -268,13 +303,49 @@ Get specific curriculum by ID.
 
 ```json
 {
-  "curriculum": {
-    "_id": "curriculum_id",
-    "name": "curriculum name",
-    "description": "description",
-    "resources": [...],
-    "projects": [...populated...]
-  }
+    "curriculum": {
+        "_id": "curriculum_id",
+        "name": "curriculum name",
+        "description": "description",
+        "owner": "user_id",
+        "resources": [
+            {
+                "_id": "resource_id",
+                "name": "resource name",
+                "type": "documentation",
+                "link": "https://example.com",
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
+        "levels": [
+            {
+                "_id": "level_id",
+                "name": "The Roots",
+                "description": "Foundation concepts",
+                "stageStart": 1,
+                "stageEnd": 5,
+                "order": 1,
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
+        "projects": [
+            {
+                "_id": "project_id",
+                "name": "project name",
+                "description": "description",
+                "githubLink": "https://github.com/user/repo",
+                "completed": false,
+                "stage": 1,
+                "order": 1,
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -301,7 +372,7 @@ Update curriculum name or description.
 ```json
 {
   "message": "Curriculum updated successfully",
-  "curriculum": { ...updated curriculum... }
+  "curriculum": { ...updated curriculum with full populated projects... }
 }
 ```
 
@@ -350,7 +421,9 @@ Add a resource to a curriculum.
         "_id": "resource_id",
         "name": "resource name",
         "type": "type",
-        "link": "url"
+        "link": "url",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
     }
 }
 ```
@@ -417,7 +490,123 @@ Get a specific resource.
         "_id": "resource_id",
         "name": "resource name",
         "type": "type",
-        "link": "url"
+        "link": "url",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
+}
+```
+
+---
+
+## Level Endpoints
+
+### Create Level
+
+Add a level to a curriculum.
+
+**Endpoint:** `POST /curricula/level/:curriculumId/createLevel`  
+**Authentication:** Required
+
+**Request Body:**
+
+```json
+{
+    "name": "string (required, max 100 chars)",
+    "description": "string (optional, max 500 chars)",
+    "stageStart": "number (required, min 1)",
+    "stageEnd": "number (required, min 1, >= stageStart)",
+    "order": "number (required, min 1, unique within curriculum)"
+}
+```
+
+**Success Response (201):**
+
+```json
+{
+    "message": "Level created successfully",
+    "level": {
+        "_id": "level_id",
+        "name": "The Roots",
+        "description": "Foundation concepts",
+        "stageStart": 1,
+        "stageEnd": 5,
+        "order": 1,
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
+}
+```
+
+---
+
+### Update Level
+
+Update a level.
+
+**Endpoint:** `PUT /curricula/level/:levelId/updateLevel`  
+**Authentication:** Required
+
+**Request Body:**
+
+```json
+{
+    "name": "new name (optional)",
+    "description": "new description (optional)",
+    "stageStart": "new stage start (optional)",
+    "stageEnd": "new stage end (optional)",
+    "order": "new order (optional)"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "message": "Level updated successfully",
+  "level": { ...updated level... }
+}
+```
+
+---
+
+### Delete Level
+
+Remove a level from curriculum.
+
+**Endpoint:** `DELETE /curricula/level/:levelId/deleteLevel`  
+**Authentication:** Required
+
+**Success Response (200):**
+
+```json
+{
+    "message": "Level deleted successfully"
+}
+```
+
+---
+
+### Get Level
+
+Get a specific level.
+
+**Endpoint:** `GET /curricula/level/:levelId`  
+**Authentication:** Required
+
+**Success Response (200):**
+
+```json
+{
+    "level": {
+        "_id": "level_id",
+        "name": "The Roots",
+        "description": "Foundation concepts",
+        "stageStart": 1,
+        "stageEnd": 5,
+        "order": 1,
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
     }
 }
 ```
@@ -440,6 +629,7 @@ Create a new project in a curriculum.
     "name": "string (required, max 100 chars)",
     "description": "string (required, max 2000 chars)",
     "githubLink": "valid GitHub URL (required)",
+    "stage": "number (required, min 1)",
     "order": "number (optional, auto-assigned if not provided)",
     "prerequisites": ["project_id_1", "project_id_2"],
     "projectResources": [
@@ -456,19 +646,31 @@ Create a new project in a curriculum.
 
 ```json
 {
-  "message": "Project created successfully",
-  "project": {
-    "_id": "project_id",
-    "name": "project name",
-    "description": "description",
-    "githubLink": "github url",
-    "completed": false,
-    "order": 1,
-    "prerequisites": [],
-    "curriculum": "curriculum_id",
-    "projectResources": [...],
-    "notes": []
-  }
+    "message": "Project created successfully",
+    "project": {
+        "_id": "project_id",
+        "name": "project name",
+        "description": "description",
+        "githubLink": "github url",
+        "completed": false,
+        "stage": 1,
+        "order": 1,
+        "prerequisites": [],
+        "curriculum": "curriculum_id",
+        "projectResources": [
+            {
+                "_id": "resource_id",
+                "name": "resource name",
+                "type": "documentation",
+                "link": "https://example.com",
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
+        "notes": [],
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -476,7 +678,7 @@ Create a new project in a curriculum.
 
 ### Get All Projects
 
-Get all projects across all user's curricula, sorted by order.
+Get all projects across all user's curricula, sorted by stage and order.
 
 **Endpoint:** `GET /projects`  
 **Authentication:** Required
@@ -492,19 +694,102 @@ Get all projects across all user's curricula, sorted by order.
             "description": "description",
             "githubLink": "url",
             "completed": false,
+            "stage": 1,
             "order": 1,
             "prerequisites": [
                 {
                     "_id": "prerequisite_id",
                     "name": "prerequisite name",
                     "description": "description",
-                    "completed": true
+                    "completed": true,
+                    "stage": 1
                 }
             ],
             "curriculum": {
                 "_id": "curriculum_id",
-                "name": "curriculum name"
-            }
+                "name": "curriculum name",
+                "owner": "user_id"
+            },
+            "projectResources": [
+                {
+                    "_id": "resource_id",
+                    "name": "resource name",
+                    "type": "documentation",
+                    "link": "https://example.com",
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
+            "notes": [],
+            "createdAt": "timestamp",
+            "updatedAt": "timestamp"
+        }
+    ]
+}
+```
+
+---
+
+### Get Projects by Stage or Level
+
+Get projects filtered by stage number or level ID within a curriculum.
+
+**Endpoint:** `GET /projects/curriculum/:curriculumId/stage`  
+**Authentication:** Required
+
+**Query Parameters:**
+
+-   `stage` (number, optional): Filter by specific stage number
+-   `level` (string, optional): Filter by level ID (gets all projects in that level's stage range)
+
+**Success Response (200):**
+
+```json
+{
+    "projects": [
+        {
+            "_id": "project_id",
+            "name": "project name",
+            "description": "description",
+            "githubLink": "url",
+            "completed": false,
+            "stage": 1,
+            "order": 1,
+            "prerequisites": [
+                {
+                    "_id": "prerequisite_id",
+                    "name": "prerequisite name",
+                    "description": "description",
+                    "completed": true,
+                    "stage": 1
+                }
+            ],
+            "curriculum": {
+                "_id": "curriculum_id",
+                "name": "curriculum name",
+                "owner": "user_id"
+            },
+            "projectResources": [
+                {
+                    "_id": "resource_id",
+                    "name": "resource name",
+                    "type": "documentation",
+                    "link": "https://example.com",
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
+            "notes": [
+                {
+                    "_id": "note_id",
+                    "type": "reflection",
+                    "content": "note content",
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
+            "createdAt": "timestamp",
+            "updatedAt": "timestamp"
         }
     ]
 }
@@ -523,37 +808,72 @@ Get specific project with notes and prerequisites.
 
 ```json
 {
-  "project": {
-    "_id": "project_id",
-    "name": "project name",
-    "description": "description",
-    "githubLink": "url",
-    "completed": false,
-    "order": 1,
-    "curriculum": {
-      "_id": "curriculum_id",
-      "name": "curriculum name",
-      "owner": "user_id"
-    },
-    "prerequisites": [
-      {
-        "_id": "prerequisite_id",
-        "name": "prerequisite name",
+    "project": {
+        "_id": "project_id",
+        "name": "project name",
         "description": "description",
-        "completed": true
-      }
-    ],
-    "projectResources": [...],
-    "notes": [
-      {
-        "_id": "note_id",
-        "type": "type",
-        "content": "content",
+        "githubLink": "url",
+        "completed": false,
+        "stage": 1,
+        "order": 1,
+        "curriculum": {
+            "_id": "curriculum_id",
+            "name": "curriculum name",
+            "owner": "user_id",
+            "levels": [
+                {
+                    "_id": "level_id",
+                    "name": "The Roots",
+                    "description": "Foundation concepts",
+                    "stageStart": 1,
+                    "stageEnd": 5,
+                    "order": 1,
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
+            "resources": [
+                {
+                    "_id": "resource_id",
+                    "name": "resource name",
+                    "type": "documentation",
+                    "link": "https://example.com",
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ]
+        },
+        "prerequisites": [
+            {
+                "_id": "prerequisite_id",
+                "name": "prerequisite name",
+                "description": "description",
+                "completed": true,
+                "stage": 1
+            }
+        ],
+        "projectResources": [
+            {
+                "_id": "resource_id",
+                "name": "resource name",
+                "type": "documentation",
+                "link": "https://example.com",
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
+        "notes": [
+            {
+                "_id": "note_id",
+                "type": "reflection",
+                "content": "content",
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
         "createdAt": "timestamp",
         "updatedAt": "timestamp"
-      }
-    ]
-  }
+    }
 }
 ```
 
@@ -574,6 +894,7 @@ Update project details.
     "description": "new description (optional)",
     "githubLink": "new github URL (optional)",
     "completed": "boolean (optional)",
+    "stage": "number (optional)",
     "order": "number (optional)",
     "prerequisites": ["project_id_1", "project_id_2"]
 }
@@ -584,7 +905,7 @@ Update project details.
 ```json
 {
   "message": "Project updated successfully",
-  "project": { ...updated project... }
+  "project": { ...updated project with full population... }
 }
 ```
 
@@ -633,7 +954,9 @@ Add a resource to a project.
         "_id": "resource_id",
         "name": "resource name",
         "type": "type",
-        "link": "url"
+        "link": "url",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
     }
 }
 ```
@@ -700,7 +1023,9 @@ Get a specific project resource.
         "_id": "resource_id",
         "name": "resource name",
         "type": "type",
-        "link": "url"
+        "link": "url",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
     }
 }
 ```
@@ -766,7 +1091,9 @@ Get a specific note.
                 "name": "curriculum name",
                 "owner": "user_id"
             }
-        }
+        },
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
     }
 }
 ```
@@ -875,7 +1202,7 @@ Check if API is running.
 
 ```json
 {
-    "message": "Username already exists"
+    "message": "Username already exists" // or "A level with this order already exists"
 }
 ```
 
@@ -889,16 +1216,47 @@ Check if API is running.
 
 ---
 
-## Notes on Implementation Issues
+## Notes on Implementation
 
-1. **Session Management**: The API uses session-based authentication with cookies. Ensure your frontend handles cookies properly with `credentials: 'include'` in fetch requests.
+### Levels and Stages System
 
-2. **CORS**: Currently configured for `http://localhost:5173`. Update the `CLIENT_URL` environment variable for production.
+The curriculum organization follows a hierarchical structure:
 
-3. **Object ID Validation**: All route parameters that expect MongoDB ObjectIds are validated using middleware. Invalid ObjectId formats will return a 400 error.
+1. **Curricula** contain **Levels** and **Projects**
+2. **Levels** define stage ranges (e.g., "The Roots" covers stages 1-5)
+3. **Projects** belong to specific stages
+4. Projects are sorted by stage first, then by order within the stage
 
-4. **Cascading Deletes**: When deleting users, curricula, or projects, all associated data is automatically deleted to maintain referential integrity.
+**Level Validation Rules:**
 
-5. **Project Ordering**: Projects are automatically assigned an order when created. If no order is specified, it will be set to the next available number. Projects are returned sorted by order.
+-   Level orders must be unique within a curriculum
+-   Stage ranges cannot overlap between levels in the same curriculum
+-   Stage end must be greater than or equal to stage start
 
-6. **Prerequisites**: Prerequisites must reference valid projects that belong to curricula owned by the same user. The API validates prerequisite access but does not prevent circular dependencies.
+**Project Validation Rules:**
+
+-   Stage is required for all projects
+-   Prerequisites must belong to curricula owned by the same user
+-   Order is auto-assigned within stage if not provided
+
+### Session Management
+
+The API uses session-based authentication with cookies. Ensure your frontend handles cookies properly with `credentials: 'include'` in fetch requests.
+
+### CORS
+
+Currently configured for `http://localhost:5173`. Update the `CLIENT_URL` environment variable for production.
+
+### Object ID Validation
+
+All route parameters that expect MongoDB ObjectIds are validated using middleware. Invalid ObjectId formats will return a 400 error.
+
+### Cascading Deletes
+
+When deleting users, curricula, or projects, all associated data is automatically deleted to maintain referential integrity.
+
+### Project Ordering and Filtering
+
+-   Projects can be filtered by stage or level using the `/projects/curriculum/:curriculumId/stage` endpoint
+-   Use query parameter `stage=1` for specific stage or `level=level_id` for all projects in a level's range
+-   All project lists are sorted by stage first, then order within stage

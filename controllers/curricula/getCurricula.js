@@ -4,12 +4,11 @@ const getCurricula = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        // Find curricula
         const curricula = await Curriculum.find({
             owner: userId,
         }).populate({
             path: "projects",
-            select: "name description githubLink completed createdAt updatedAt",
+            select: "name description githubLink completed stage order createdAt updatedAt",
         });
 
         if (!curricula || curricula.length === 0) {

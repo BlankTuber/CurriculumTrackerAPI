@@ -11,17 +11,17 @@ const createProject = async (req, res) => {
             githubLink,
             projectResources = [],
             order,
+            stage,
             prerequisites = [],
         } = req.body;
 
-        // Validate required fields
-        if (!name || !description || !githubLink) {
+        if (!name || !description || !githubLink || !stage) {
             return res.status(400).json({
-                message: "Name, description, and GitHub link are required",
+                message:
+                    "Name, description, GitHub link, and stage are required",
             });
         }
 
-        // Verify curriculum exists and user owns it
         const curriculum = await Curriculum.findOne({
             _id: curriculumId,
             owner: userId,
@@ -32,11 +32,11 @@ const createProject = async (req, res) => {
                 .json({ message: "Curriculum not found or access denied" });
         }
 
-        // If no order provided, set to next available order
         let projectOrder = order;
         if (projectOrder === undefined) {
             const existingProjects = await Project.find({
                 curriculum: curriculumId,
+                stage: stage,
             });
             const maxOrder = existingProjects.reduce(
                 (max, project) => Math.max(max, project.order || 0),
@@ -45,7 +45,6 @@ const createProject = async (req, res) => {
             projectOrder = maxOrder + 1;
         }
 
-        // Validate prerequisites if provided
         if (prerequisites.length > 0) {
             const prerequisiteProjects = await Project.find({
                 _id: { $in: prerequisites },
@@ -57,7 +56,6 @@ const createProject = async (req, res) => {
                 });
             }
 
-            // Verify all prerequisites belong to curricula owned by this user
             const invalidPrerequisites = prerequisiteProjects.filter(
                 (project) =>
                     project.curriculum.owner.toString() !== userId.toString()
@@ -70,7 +68,6 @@ const createProject = async (req, res) => {
             }
         }
 
-        // Create project
         const project = new Project({
             name,
             description,
@@ -78,12 +75,12 @@ const createProject = async (req, res) => {
             curriculum: curriculumId,
             projectResources,
             order: projectOrder,
+            stage,
             prerequisites,
         });
 
         await project.save();
 
-        // Add project to curriculum's projects array
         curriculum.projects.push(project._id);
         await curriculum.save();
 
@@ -94,7 +91,6 @@ const createProject = async (req, res) => {
     } catch (error) {
         console.error("Create project error:", error);
 
-        // Handle validation errors
         if (error.name === "ValidationError") {
             const messages = Object.values(error.errors).map(
                 (err) => err.message

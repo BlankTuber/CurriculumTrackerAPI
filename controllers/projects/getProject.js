@@ -5,20 +5,18 @@ const getProject = async (req, res) => {
         const userId = req.user._id;
         const { projectId } = req.params;
 
-        // Find project and verify ownership through curriculum
         const project = await Project.findById(projectId)
-            .populate("curriculum", "name owner")
+            .populate("curriculum", "name owner levels resources")
             .populate({
                 path: "notes",
                 select: "type content createdAt updatedAt",
             })
-            .populate("prerequisites", "name description completed");
+            .populate("prerequisites", "name description completed stage");
 
         if (!project) {
             return res.status(404).json({ message: "Project not found" });
         }
 
-        // Verify user owns the curriculum that contains this project
         if (project.curriculum.owner.toString() !== userId.toString()) {
             return res.status(403).json({ message: "Access denied" });
         }
