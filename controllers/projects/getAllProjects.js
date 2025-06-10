@@ -11,7 +11,10 @@ const getAllProjects = async (req, res) => {
             curriculum: { $in: curriculumIds },
         })
             .populate("curriculum", "name owner")
-            .populate("prerequisites", "name description completed stage")
+            .populate(
+                "prerequisites",
+                "name description identifier state stage"
+            )
             .sort({ stage: 1, order: 1 });
 
         if (!projects || projects.length === 0) {

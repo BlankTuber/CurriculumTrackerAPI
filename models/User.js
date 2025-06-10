@@ -23,6 +23,18 @@ const userSchema = new mongoose.Schema(
             required: [true, "Password is required"],
             minlength: [6, "Password must be at least 6 characters long"],
         },
+        githubUsername: {
+            type: String,
+            trim: true,
+            maxlength: [39, "GitHub username cannot exceed 39 characters"],
+            validate: {
+                validator: function (v) {
+                    if (!v) return true;
+                    return /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(v);
+                },
+                message: "Invalid GitHub username format",
+            },
+        },
     },
     {
         timestamps: true,

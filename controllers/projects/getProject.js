@@ -11,7 +11,10 @@ const getProject = async (req, res) => {
                 path: "notes",
                 select: "type content createdAt updatedAt",
             })
-            .populate("prerequisites", "name description completed stage");
+            .populate(
+                "prerequisites",
+                "name description identifier state stage"
+            );
 
         if (!project) {
             return res.status(404).json({ message: "Project not found" });

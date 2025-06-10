@@ -8,8 +8,10 @@ const updateProject = async (req, res) => {
         const {
             name,
             description,
-            githubLink,
-            completed,
+            identifier,
+            topics,
+            githubRepo,
+            state,
             order,
             stage,
             prerequisites,
@@ -29,8 +31,25 @@ const updateProject = async (req, res) => {
         const updateFields = {};
         if (name !== undefined) updateFields.name = name;
         if (description !== undefined) updateFields.description = description;
-        if (githubLink !== undefined) updateFields.githubLink = githubLink;
-        if (completed !== undefined) updateFields.completed = completed;
+        if (identifier !== undefined) {
+            if (identifier && identifier !== project.identifier) {
+                const existingProject = await Project.findOne({
+                    curriculum: project.curriculum._id,
+                    identifier: identifier,
+                    _id: { $ne: projectId },
+                });
+                if (existingProject) {
+                    return res.status(400).json({
+                        message:
+                            "A project with this identifier already exists in the curriculum",
+                    });
+                }
+            }
+            updateFields.identifier = identifier;
+        }
+        if (topics !== undefined) updateFields.topics = topics;
+        if (githubRepo !== undefined) updateFields.githubRepo = githubRepo;
+        if (state !== undefined) updateFields.state = state;
         if (order !== undefined) updateFields.order = order;
         if (stage !== undefined) updateFields.stage = stage;
 
@@ -77,7 +96,10 @@ const updateProject = async (req, res) => {
                 path: "notes",
                 select: "type content createdAt updatedAt",
             })
-            .populate("prerequisites", "name description completed stage");
+            .populate(
+                "prerequisites",
+                "name description identifier state stage"
+            );
 
         res.status(200).json({
             message: "Project updated successfully",

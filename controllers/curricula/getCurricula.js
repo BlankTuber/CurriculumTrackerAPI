@@ -8,7 +8,7 @@ const getCurricula = async (req, res) => {
             owner: userId,
         }).populate({
             path: "projects",
-            select: "name description githubLink completed stage order createdAt updatedAt",
+            select: "name description identifier topics githubRepo state stage order createdAt updatedAt",
         });
 
         if (!curricula || curricula.length === 0) {

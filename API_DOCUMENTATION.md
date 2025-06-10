@@ -47,7 +47,8 @@ Create a new user account.
 ```json
 {
     "username": "string (3-30 chars, alphanumeric + underscore)",
-    "password": "string (min 6 chars)"
+    "password": "string (min 6 chars)",
+    "githubUsername": "string (optional, max 39 chars, valid GitHub username format)"
 }
 ```
 
@@ -58,7 +59,8 @@ Create a new user account.
     "message": "User registered successfully",
     "user": {
         "id": "user_id",
-        "username": "username"
+        "username": "username",
+        "githubUsername": "github_username"
     }
 }
 ```
@@ -88,7 +90,8 @@ Authenticate user and create session.
     "message": "Login successful",
     "user": {
         "id": "user_id",
-        "username": "username"
+        "username": "username",
+        "githubUsername": "github_username"
     }
 }
 ```
@@ -109,6 +112,7 @@ Get current user information and statistics.
     "user": {
         "id": "user_id",
         "username": "username",
+        "githubUsername": "github_username",
         "createdAt": "timestamp",
         "updatedAt": "timestamp"
     },
@@ -122,7 +126,7 @@ Get current user information and statistics.
 
 ### Update User
 
-Update username or password.
+Update username, password, or GitHub username.
 
 **Endpoint:** `PUT /user/updateUser`  
 **Authentication:** Required
@@ -133,7 +137,8 @@ Update username or password.
 {
     "username": "new_username (optional)",
     "password": "new_password (optional)",
-    "currentPassword": "required if changing password"
+    "currentPassword": "required if changing password",
+    "githubUsername": "new_github_username (optional, can be null to remove)"
 }
 ```
 
@@ -144,7 +149,8 @@ Update username or password.
     "message": "User updated successfully",
     "user": {
         "id": "user_id",
-        "username": "new_username"
+        "username": "new_username",
+        "githubUsername": "new_github_username"
     }
 }
 ```
@@ -275,8 +281,10 @@ Get all curricula for authenticated user.
                     "_id": "project_id",
                     "name": "project name",
                     "description": "description",
-                    "githubLink": "https://github.com/user/repo",
-                    "completed": false,
+                    "identifier": "R1",
+                    "topics": ["topic1", "topic2"],
+                    "githubRepo": "repository-name",
+                    "state": "not_started",
                     "stage": 1,
                     "order": 1,
                     "createdAt": "timestamp",
@@ -335,8 +343,10 @@ Get specific curriculum by ID.
                 "_id": "project_id",
                 "name": "project name",
                 "description": "description",
-                "githubLink": "https://github.com/user/repo",
-                "completed": false,
+                "identifier": "R1",
+                "topics": ["topic1", "topic2"],
+                "githubRepo": "repository-name",
+                "state": "not_started",
                 "stage": 1,
                 "order": 1,
                 "createdAt": "timestamp",
@@ -628,9 +638,12 @@ Create a new project in a curriculum.
 {
     "name": "string (required, max 100 chars)",
     "description": "string (required, max 2000 chars)",
-    "githubLink": "valid GitHub URL (required)",
+    "identifier": "string (optional, max 20 chars, alphanumeric + underscore + hyphen)",
+    "topics": ["string", "string"] (optional, each max 50 chars),
+    "githubRepo": "string (optional, repository name only)",
     "stage": "number (required, min 1)",
     "order": "number (optional, auto-assigned if not provided)",
+    "state": "not_started|in_progress|completed (optional, defaults to not_started)",
     "prerequisites": ["project_id_1", "project_id_2"],
     "projectResources": [
         {
@@ -651,8 +664,10 @@ Create a new project in a curriculum.
         "_id": "project_id",
         "name": "project name",
         "description": "description",
-        "githubLink": "github url",
-        "completed": false,
+        "identifier": "R1",
+        "topics": ["topic1", "topic2"],
+        "githubRepo": "repository-name",
+        "state": "not_started",
         "stage": 1,
         "order": 1,
         "prerequisites": [],
@@ -692,8 +707,10 @@ Get all projects across all user's curricula, sorted by stage and order.
             "_id": "project_id",
             "name": "project name",
             "description": "description",
-            "githubLink": "url",
-            "completed": false,
+            "identifier": "R1",
+            "topics": ["topic1", "topic2"],
+            "githubRepo": "repository-name",
+            "state": "not_started",
             "stage": 1,
             "order": 1,
             "prerequisites": [
@@ -701,7 +718,8 @@ Get all projects across all user's curricula, sorted by stage and order.
                     "_id": "prerequisite_id",
                     "name": "prerequisite name",
                     "description": "description",
-                    "completed": true,
+                    "identifier": "P1",
+                    "state": "completed",
                     "stage": 1
                 }
             ],
@@ -751,8 +769,10 @@ Get projects filtered by stage number or level ID within a curriculum.
             "_id": "project_id",
             "name": "project name",
             "description": "description",
-            "githubLink": "url",
-            "completed": false,
+            "identifier": "R1",
+            "topics": ["topic1", "topic2"],
+            "githubRepo": "repository-name",
+            "state": "not_started",
             "stage": 1,
             "order": 1,
             "prerequisites": [
@@ -760,7 +780,8 @@ Get projects filtered by stage number or level ID within a curriculum.
                     "_id": "prerequisite_id",
                     "name": "prerequisite name",
                     "description": "description",
-                    "completed": true,
+                    "identifier": "P1",
+                    "state": "completed",
                     "stage": 1
                 }
             ],
@@ -812,8 +833,10 @@ Get specific project with notes and prerequisites.
         "_id": "project_id",
         "name": "project name",
         "description": "description",
-        "githubLink": "url",
-        "completed": false,
+        "identifier": "R1",
+        "topics": ["topic1", "topic2"],
+        "githubRepo": "repository-name",
+        "state": "not_started",
         "stage": 1,
         "order": 1,
         "curriculum": {
@@ -848,7 +871,8 @@ Get specific project with notes and prerequisites.
                 "_id": "prerequisite_id",
                 "name": "prerequisite name",
                 "description": "description",
-                "completed": true,
+                "identifier": "P1",
+                "state": "completed",
                 "stage": 1
             }
         ],
@@ -892,8 +916,10 @@ Update project details.
 {
     "name": "new name (optional)",
     "description": "new description (optional)",
-    "githubLink": "new github URL (optional)",
-    "completed": "boolean (optional)",
+    "identifier": "new identifier (optional)",
+    "topics": ["new", "topics"] (optional),
+    "githubRepo": "new repository name (optional)",
+    "state": "not_started|in_progress|completed (optional)",
     "stage": "number (optional)",
     "order": "number (optional)",
     "prerequisites": ["project_id_1", "project_id_2"]
@@ -1202,7 +1228,7 @@ Check if API is running.
 
 ```json
 {
-    "message": "Username already exists" // or "A level with this order already exists"
+    "message": "Username already exists" // or "GitHub username already exists" or "A project with this identifier already exists"
 }
 ```
 
@@ -1217,6 +1243,26 @@ Check if API is running.
 ---
 
 ## Notes on Implementation
+
+### User GitHub Integration
+
+Users can optionally set a GitHub username in their profile. When set, projects can reference GitHub repositories by providing only the repository name. The full GitHub URL would be constructed as `https://github.com/{githubUsername}/{githubRepo}`.
+
+### Project Identifiers
+
+Projects can have optional identifiers (e.g., "R1", "L2P3") to help with organization and prerequisite selection. Identifiers must be unique within a curriculum and can contain letters, numbers, underscores, and hyphens.
+
+### Project Topics/Tags
+
+Projects can have associated topics/tags to help categorize content and assist with prerequisite selection. Each topic is a string with a maximum of 50 characters.
+
+### Project States
+
+Projects have three possible states:
+
+-   `not_started` (default): Project hasn't been begun
+-   `in_progress`: Project is currently being worked on
+-   `completed`: Project has been finished
 
 ### Levels and Stages System
 
@@ -1236,6 +1282,7 @@ The curriculum organization follows a hierarchical structure:
 **Project Validation Rules:**
 
 -   Stage is required for all projects
+-   Identifiers must be unique within a curriculum
 -   Prerequisites must belong to curricula owned by the same user
 -   Order is auto-assigned within stage if not provided
 

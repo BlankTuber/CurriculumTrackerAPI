@@ -40,7 +40,10 @@ const getProjectsByStage = async (req, res) => {
                 path: "notes",
                 select: "type content createdAt updatedAt",
             })
-            .populate("prerequisites", "name description completed stage")
+            .populate(
+                "prerequisites",
+                "name description identifier state stage"
+            )
             .sort({ stage: 1, order: 1 });
 
         if (!projects || projects.length === 0) {

@@ -59,19 +59,45 @@ const projectSchema = new mongoose.Schema(
             trim: true,
             maxlength: [2000, "Description cannot exceed 2000 characters"],
         },
-        githubLink: {
+        identifier: {
             type: String,
-            required: [true, "GitHub link is required"],
+            trim: true,
+            maxlength: [20, "Identifier cannot exceed 20 characters"],
             validate: {
                 validator: function (v) {
-                    return validator.isURL(v) && v.includes("github.com");
+                    if (!v) return true;
+                    return /^[a-zA-Z0-9_-]+$/.test(v);
                 },
-                message: "Please provide a valid GitHub URL",
+                message:
+                    "Identifier can only contain letters, numbers, underscores, and hyphens",
             },
         },
-        completed: {
-            type: Boolean,
-            default: false,
+        topics: [
+            {
+                type: String,
+                trim: true,
+                maxlength: [50, "Topic cannot exceed 50 characters"],
+            },
+        ],
+        githubRepo: {
+            type: String,
+            trim: true,
+            maxlength: [100, "Repository name cannot exceed 100 characters"],
+            validate: {
+                validator: function (v) {
+                    if (!v) return true;
+                    return /^[a-zA-Z0-9._-]+$/.test(v);
+                },
+                message: "Repository name contains invalid characters",
+            },
+        },
+        state: {
+            type: String,
+            enum: {
+                values: ["not_started", "in_progress", "completed"],
+                message: "Invalid project state",
+            },
+            default: "not_started",
         },
         order: {
             type: Number,
@@ -109,5 +135,7 @@ const projectSchema = new mongoose.Schema(
 projectSchema.index({ stage: 1 });
 projectSchema.index({ order: 1 });
 projectSchema.index({ curriculum: 1, stage: 1 });
+projectSchema.index({ identifier: 1 });
+projectSchema.index({ topics: 1 });
 
 module.exports = mongoose.model("Project", projectSchema);

@@ -8,17 +8,19 @@ const createProject = async (req, res) => {
         const {
             name,
             description,
-            githubLink,
+            identifier,
+            topics = [],
+            githubRepo,
             projectResources = [],
             order,
             stage,
+            state = "not_started",
             prerequisites = [],
         } = req.body;
 
-        if (!name || !description || !githubLink || !stage) {
+        if (!name || !description || !stage) {
             return res.status(400).json({
-                message:
-                    "Name, description, GitHub link, and stage are required",
+                message: "Name, description, and stage are required",
             });
         }
 
@@ -30,6 +32,19 @@ const createProject = async (req, res) => {
             return res
                 .status(404)
                 .json({ message: "Curriculum not found or access denied" });
+        }
+
+        if (identifier) {
+            const existingProject = await Project.findOne({
+                curriculum: curriculumId,
+                identifier: identifier,
+            });
+            if (existingProject) {
+                return res.status(400).json({
+                    message:
+                        "A project with this identifier already exists in the curriculum",
+                });
+            }
         }
 
         let projectOrder = order;
@@ -71,11 +86,14 @@ const createProject = async (req, res) => {
         const project = new Project({
             name,
             description,
-            githubLink,
+            identifier,
+            topics,
+            githubRepo,
             curriculum: curriculumId,
             projectResources,
             order: projectOrder,
             stage,
+            state,
             prerequisites,
         });
 
