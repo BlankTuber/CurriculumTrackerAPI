@@ -83,12 +83,22 @@ const createProject = async (req, res) => {
             }
         }
 
+        let finalGithubRepo = githubRepo;
+        if (!finalGithubRepo) {
+            const stageDefinition = curriculum.stages.find(
+                (s) => s.stageNumber === stage
+            );
+            if (stageDefinition && stageDefinition.defaultGithubRepo) {
+                finalGithubRepo = stageDefinition.defaultGithubRepo;
+            }
+        }
+
         const project = new Project({
             name,
             description,
             identifier,
             topics,
-            githubRepo,
+            githubRepo: finalGithubRepo,
             curriculum: curriculumId,
             projectResources,
             order: projectOrder,

@@ -15,10 +15,31 @@ const createLevel = require("../controllers/curricula/createLevel");
 const updateLevel = require("../controllers/curricula/updateLevel");
 const deleteLevel = require("../controllers/curricula/deleteLevel");
 const getLevel = require("../controllers/curricula/getLevel");
+const createStage = require("../controllers/curricula/createStage");
+const updateStage = require("../controllers/curricula/updateStage");
+const deleteStage = require("../controllers/curricula/deleteStage");
+const getStage = require("../controllers/curricula/getStage");
 
 const router = express.Router();
 
 router.use(authenticateUser);
+
+router.post(
+    "/stage/:curriculumId/createStage",
+    validateObjectIds("curriculumId"),
+    createStage
+);
+router.put(
+    "/stage/:stageId/updateStage",
+    validateObjectIds("stageId"),
+    updateStage
+);
+router.delete(
+    "/stage/:stageId/deleteStage",
+    validateObjectIds("stageId"),
+    deleteStage
+);
+router.get("/stage/:stageId", validateObjectIds("stageId"), getStage);
 
 router.post(
     "/level/:curriculumId/createLevel",

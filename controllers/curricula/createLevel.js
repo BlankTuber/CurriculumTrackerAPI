@@ -4,7 +4,14 @@ const createLevel = async (req, res) => {
     try {
         const userId = req.user._id;
         const { curriculumId } = req.params;
-        const { name, description, stageStart, stageEnd, order } = req.body;
+        const {
+            name,
+            description,
+            defaultIdentifier,
+            stageStart,
+            stageEnd,
+            order,
+        } = req.body;
 
         if (!name || !stageStart || !stageEnd || !order) {
             return res.status(400).json({
@@ -48,6 +55,7 @@ const createLevel = async (req, res) => {
         const newLevel = {
             name,
             description,
+            defaultIdentifier,
             stageStart,
             stageEnd,
             order,

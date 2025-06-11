@@ -48,10 +48,27 @@ const updateProject = async (req, res) => {
             updateFields.identifier = identifier;
         }
         if (topics !== undefined) updateFields.topics = topics;
-        if (githubRepo !== undefined) updateFields.githubRepo = githubRepo;
         if (state !== undefined) updateFields.state = state;
         if (order !== undefined) updateFields.order = order;
         if (stage !== undefined) updateFields.stage = stage;
+
+        if (githubRepo !== undefined) {
+            updateFields.githubRepo = githubRepo;
+        } else if (stage !== undefined && stage !== project.stage) {
+            const curriculum = await Curriculum.findById(
+                project.curriculum._id
+            );
+            const stageDefinition = curriculum.stages.find(
+                (s) => s.stageNumber === stage
+            );
+            if (
+                stageDefinition &&
+                stageDefinition.defaultGithubRepo &&
+                !project.githubRepo
+            ) {
+                updateFields.githubRepo = stageDefinition.defaultGithubRepo;
+            }
+        }
 
         if (prerequisites !== undefined) {
             if (prerequisites.length > 0) {
@@ -91,7 +108,7 @@ const updateProject = async (req, res) => {
             updateFields,
             { new: true, runValidators: true }
         )
-            .populate("curriculum", "name owner levels")
+            .populate("curriculum", "name owner levels stages")
             .populate({
                 path: "notes",
                 select: "type content createdAt updatedAt",

@@ -4,7 +4,14 @@ const updateLevel = async (req, res) => {
     try {
         const userId = req.user._id;
         const { levelId } = req.params;
-        const { name, description, stageStart, stageEnd, order } = req.body;
+        const {
+            name,
+            description,
+            defaultIdentifier,
+            stageStart,
+            stageEnd,
+            order,
+        } = req.body;
 
         const curriculum = await Curriculum.findOne({
             owner: userId,
@@ -61,6 +68,8 @@ const updateLevel = async (req, res) => {
 
         if (name !== undefined) level.name = name;
         if (description !== undefined) level.description = description;
+        if (defaultIdentifier !== undefined)
+            level.defaultIdentifier = defaultIdentifier;
         if (stageStart !== undefined) level.stageStart = stageStart;
         if (stageEnd !== undefined) level.stageEnd = stageEnd;
         if (order !== undefined) level.order = order;

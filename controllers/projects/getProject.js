@@ -6,7 +6,7 @@ const getProject = async (req, res) => {
         const { projectId } = req.params;
 
         const project = await Project.findById(projectId)
-            .populate("curriculum", "name owner levels resources")
+            .populate("curriculum", "name owner levels stages resources")
             .populate({
                 path: "notes",
                 select: "type content createdAt updatedAt",
