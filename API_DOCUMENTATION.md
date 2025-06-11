@@ -228,6 +228,7 @@ Create a new curriculum.
             }
         ],
         "levels": [],
+        "stages": [],
         "projects": [],
         "createdAt": "timestamp",
         "updatedAt": "timestamp"
@@ -269,9 +270,21 @@ Get all curricula for authenticated user.
                     "_id": "level_id",
                     "name": "The Roots",
                     "description": "Foundation concepts",
+                    "defaultIdentifier": "R",
                     "stageStart": 1,
                     "stageEnd": 5,
                     "order": 1,
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
+            "stages": [
+                {
+                    "_id": "stage_id",
+                    "stageNumber": 1,
+                    "name": "Basic Setup",
+                    "description": "Initial project setup",
+                    "defaultGithubRepo": "project-starter",
                     "createdAt": "timestamp",
                     "updatedAt": "timestamp"
                 }
@@ -331,9 +344,21 @@ Get specific curriculum by ID.
                 "_id": "level_id",
                 "name": "The Roots",
                 "description": "Foundation concepts",
+                "defaultIdentifier": "R",
                 "stageStart": 1,
                 "stageEnd": 5,
                 "order": 1,
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
+        "stages": [
+            {
+                "_id": "stage_id",
+                "stageNumber": 1,
+                "name": "Basic Setup",
+                "description": "Initial project setup",
+                "defaultGithubRepo": "project-starter",
                 "createdAt": "timestamp",
                 "updatedAt": "timestamp"
             }
@@ -524,6 +549,7 @@ Add a level to a curriculum.
 {
     "name": "string (required, max 100 chars)",
     "description": "string (optional, max 500 chars)",
+    "defaultIdentifier": "string (optional, max 10 chars, alphanumeric + underscore + hyphen)",
     "stageStart": "number (required, min 1)",
     "stageEnd": "number (required, min 1, >= stageStart)",
     "order": "number (required, min 1, unique within curriculum)"
@@ -539,6 +565,7 @@ Add a level to a curriculum.
         "_id": "level_id",
         "name": "The Roots",
         "description": "Foundation concepts",
+        "defaultIdentifier": "R",
         "stageStart": 1,
         "stageEnd": 5,
         "order": 1,
@@ -563,6 +590,7 @@ Update a level.
 {
     "name": "new name (optional)",
     "description": "new description (optional)",
+    "defaultIdentifier": "new default identifier (optional)",
     "stageStart": "new stage start (optional)",
     "stageEnd": "new stage end (optional)",
     "order": "new order (optional)"
@@ -612,9 +640,120 @@ Get a specific level.
         "_id": "level_id",
         "name": "The Roots",
         "description": "Foundation concepts",
+        "defaultIdentifier": "R",
         "stageStart": 1,
         "stageEnd": 5,
         "order": 1,
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
+}
+```
+
+---
+
+## Stage Endpoints
+
+### Create Stage
+
+Add a stage definition to a curriculum.
+
+**Endpoint:** `POST /curricula/stage/:curriculumId/createStage`  
+**Authentication:** Required
+
+**Request Body:**
+
+```json
+{
+    "stageNumber": "number (required, min 1, unique within curriculum)",
+    "name": "string (optional, max 100 chars)",
+    "description": "string (optional, max 500 chars)",
+    "defaultGithubRepo": "string (optional, max 100 chars, repository name only)"
+}
+```
+
+**Success Response (201):**
+
+```json
+{
+    "message": "Stage created successfully",
+    "stage": {
+        "_id": "stage_id",
+        "stageNumber": 1,
+        "name": "Basic Setup",
+        "description": "Initial project setup",
+        "defaultGithubRepo": "project-starter",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
+}
+```
+
+---
+
+### Update Stage
+
+Update a stage definition.
+
+**Endpoint:** `PUT /curricula/stage/:stageId/updateStage`  
+**Authentication:** Required
+
+**Request Body:**
+
+```json
+{
+    "stageNumber": "new stage number (optional)",
+    "name": "new name (optional)",
+    "description": "new description (optional)",
+    "defaultGithubRepo": "new default github repo (optional)"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "message": "Stage updated successfully",
+  "stage": { ...updated stage... }
+}
+```
+
+---
+
+### Delete Stage
+
+Remove a stage definition from curriculum.
+
+**Endpoint:** `DELETE /curricula/stage/:stageId/deleteStage`  
+**Authentication:** Required
+
+**Success Response (200):**
+
+```json
+{
+    "message": "Stage deleted successfully"
+}
+```
+
+---
+
+### Get Stage
+
+Get a specific stage definition.
+
+**Endpoint:** `GET /curricula/stage/:stageId`  
+**Authentication:** Required
+
+**Success Response (200):**
+
+```json
+{
+    "stage": {
+        "_id": "stage_id",
+        "stageNumber": 1,
+        "name": "Basic Setup",
+        "description": "Initial project setup",
+        "defaultGithubRepo": "project-starter",
         "createdAt": "timestamp",
         "updatedAt": "timestamp"
     }
@@ -640,7 +779,7 @@ Create a new project in a curriculum.
     "description": "string (required, max 2000 chars)",
     "identifier": "string (optional, max 20 chars, alphanumeric + underscore + hyphen)",
     "topics": ["string", "string"] (optional, each max 50 chars),
-    "githubRepo": "string (optional, repository name only)",
+    "githubRepo": "string (optional, repository name only - if not provided, uses stage's defaultGithubRepo if available)",
     "stage": "number (required, min 1)",
     "order": "number (optional, auto-assigned if not provided)",
     "state": "not_started|in_progress|completed (optional, defaults to not_started)",
@@ -848,9 +987,21 @@ Get specific project with notes and prerequisites.
                     "_id": "level_id",
                     "name": "The Roots",
                     "description": "Foundation concepts",
+                    "defaultIdentifier": "R",
                     "stageStart": 1,
                     "stageEnd": 5,
                     "order": 1,
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
+            "stages": [
+                {
+                    "_id": "stage_id",
+                    "stageNumber": 1,
+                    "name": "Basic Setup",
+                    "description": "Initial project setup",
+                    "defaultGithubRepo": "project-starter",
                     "createdAt": "timestamp",
                     "updatedAt": "timestamp"
                 }
@@ -1228,7 +1379,7 @@ Check if API is running.
 
 ```json
 {
-    "message": "Username already exists" // or "GitHub username already exists" or "A project with this identifier already exists"
+    "message": "Username already exists" // or "GitHub username already exists" or "A project with this identifier already exists" or "A stage with this number already exists"
 }
 ```
 
@@ -1252,6 +1403,10 @@ Users can optionally set a GitHub username in their profile. When set, projects 
 
 Projects can have optional identifiers (e.g., "R1", "L2P3") to help with organization and prerequisite selection. Identifiers must be unique within a curriculum and can contain letters, numbers, underscores, and hyphens.
 
+### Level Default Identifiers
+
+Levels can have optional default identifiers (e.g., "R", "L") that can be used as prefixes or templates for project identifiers within that level's stage range. This helps maintain consistent naming conventions across projects in the same level.
+
 ### Project Topics/Tags
 
 Projects can have associated topics/tags to help categorize content and assist with prerequisite selection. Each topic is a string with a maximum of 50 characters.
@@ -1264,20 +1419,45 @@ Projects have three possible states:
 -   `in_progress`: Project is currently being worked on
 -   `completed`: Project has been finished
 
+### Stages System
+
+Stages are now first-class entities within curricula that can have their own properties:
+
+**Stage Properties:**
+
+-   `stageNumber`: Unique number within the curriculum
+-   `name`: Optional descriptive name for the stage
+-   `description`: Optional description of what the stage covers
+-   `defaultGithubRepo`: Optional default repository name for projects in this stage
+
+**Stage GitHub Repository Inheritance:**
+When creating or updating projects:
+
+1. If a project specifies a `githubRepo`, that value is used
+2. If no `githubRepo` is specified, the system looks for a stage definition with the same stage number
+3. If a matching stage has a `defaultGithubRepo`, that value is used
+4. Otherwise, the project has no github repository
+
 ### Levels and Stages System
 
 The curriculum organization follows a hierarchical structure:
 
-1. **Curricula** contain **Levels** and **Projects**
-2. **Levels** define stage ranges (e.g., "The Roots" covers stages 1-5)
-3. **Projects** belong to specific stages
-4. Projects are sorted by stage first, then by order within the stage
+1. **Curricula** contain **Levels**, **Stages**, and **Projects**
+2. **Levels** define conceptual groupings with stage ranges (e.g., "The Roots" covers stages 1-5)
+3. **Stages** define specific properties for individual stage numbers (e.g., stage 1 has defaultGithubRepo "project-starter")
+4. **Projects** belong to specific stages and inherit properties from both their stage definition and containing level
+5. Projects are sorted by stage first, then by order within the stage
 
 **Level Validation Rules:**
 
 -   Level orders must be unique within a curriculum
 -   Stage ranges cannot overlap between levels in the same curriculum
 -   Stage end must be greater than or equal to stage start
+
+**Stage Validation Rules:**
+
+-   Stage numbers must be unique within a curriculum
+-   Stage numbers can exist independently of level definitions
 
 **Project Validation Rules:**
 
