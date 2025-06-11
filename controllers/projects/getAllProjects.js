@@ -10,11 +10,14 @@ const getAllProjects = async (req, res) => {
         const projects = await Project.find({
             curriculum: { $in: curriculumIds },
         })
-            .populate("curriculum", "name owner")
-            .populate(
-                "prerequisites",
-                "name description identifier state stage"
-            )
+            .populate({
+                path: "curriculum",
+                select: "name owner",
+            })
+            .populate({
+                path: "prerequisites",
+                select: "name description identifier state stage",
+            })
             .sort({ stage: 1, order: 1 });
 
         if (!projects || projects.length === 0) {

@@ -108,15 +108,18 @@ const updateProject = async (req, res) => {
             updateFields,
             { new: true, runValidators: true }
         )
-            .populate("curriculum", "name owner levels stages")
+            .populate({
+                path: "curriculum",
+                select: "name owner description resources levels stages createdAt updatedAt",
+            })
             .populate({
                 path: "notes",
                 select: "type content createdAt updatedAt",
             })
-            .populate(
-                "prerequisites",
-                "name description identifier state stage"
-            );
+            .populate({
+                path: "prerequisites",
+                select: "name description identifier state stage",
+            });
 
         res.status(200).json({
             message: "Project updated successfully",

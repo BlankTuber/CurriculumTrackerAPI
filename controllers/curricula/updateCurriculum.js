@@ -6,7 +6,6 @@ const updateCurriculum = async (req, res) => {
         const { curriculumId } = req.params;
         const { name, description } = req.body;
 
-        // Find curriculum and verify ownership
         const curriculum = await Curriculum.findOne({
             _id: curriculumId,
             owner: userId,
@@ -17,24 +16,24 @@ const updateCurriculum = async (req, res) => {
                 .json({ message: "Curriculum not found or access denied" });
         }
 
-        // Prepare update fields
         const updateFields = {};
         if (name !== undefined) updateFields.name = name;
         if (description !== undefined) updateFields.description = description;
 
-        // Check if there's anything to update
         if (Object.keys(updateFields).length === 0) {
             return res
                 .status(400)
                 .json({ message: "No valid fields to update" });
         }
 
-        // Update curriculum
         const updatedCurriculum = await Curriculum.findByIdAndUpdate(
             curriculumId,
             updateFields,
             { new: true, runValidators: true }
-        ).populate("projects");
+        ).populate({
+            path: "projects",
+            select: "name description identifier topics githubRepo state stage order createdAt updatedAt",
+        });
 
         res.status(200).json({
             message: "Curriculum updated successfully",
@@ -43,7 +42,6 @@ const updateCurriculum = async (req, res) => {
     } catch (error) {
         console.error("Update curriculum error:", error);
 
-        // Handle validation errors
         if (error.name === "ValidationError") {
             const messages = Object.values(error.errors).map(
                 (err) => err.message

@@ -6,15 +6,18 @@ const getProject = async (req, res) => {
         const { projectId } = req.params;
 
         const project = await Project.findById(projectId)
-            .populate("curriculum", "name owner levels stages resources")
+            .populate({
+                path: "curriculum",
+                select: "name owner description resources levels stages createdAt updatedAt",
+            })
             .populate({
                 path: "notes",
                 select: "type content createdAt updatedAt",
             })
-            .populate(
-                "prerequisites",
-                "name description identifier state stage"
-            );
+            .populate({
+                path: "prerequisites",
+                select: "name description identifier state stage",
+            });
 
         if (!project) {
             return res.status(404).json({ message: "Project not found" });

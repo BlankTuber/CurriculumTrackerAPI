@@ -406,8 +406,33 @@ Update curriculum name or description.
 
 ```json
 {
-  "message": "Curriculum updated successfully",
-  "curriculum": { ...updated curriculum with full populated projects... }
+    "message": "Curriculum updated successfully",
+    "curriculum": {
+        "_id": "curriculum_id",
+        "name": "curriculum name",
+        "description": "description",
+        "owner": "user_id",
+        "resources": [],
+        "levels": [],
+        "stages": [],
+        "projects": [
+            {
+                "_id": "project_id",
+                "name": "project name",
+                "description": "description",
+                "identifier": "R1",
+                "topics": ["topic1", "topic2"],
+                "githubRepo": "repository-name",
+                "state": "not_started",
+                "stage": 1,
+                "order": 1,
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -486,8 +511,15 @@ Update a resource.
 
 ```json
 {
-  "message": "Resource updated successfully",
-  "resource": { ...updated resource... }
+    "message": "Resource updated successfully",
+    "resource": {
+        "_id": "resource_id",
+        "name": "resource name",
+        "type": "type",
+        "link": "url",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -601,8 +633,18 @@ Update a level.
 
 ```json
 {
-  "message": "Level updated successfully",
-  "level": { ...updated level... }
+    "message": "Level updated successfully",
+    "level": {
+        "_id": "level_id",
+        "name": "The Roots",
+        "description": "Foundation concepts",
+        "defaultIdentifier": "R",
+        "stageStart": 1,
+        "stageEnd": 5,
+        "order": 1,
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -713,8 +755,16 @@ Update a stage definition.
 
 ```json
 {
-  "message": "Stage updated successfully",
-  "stage": { ...updated stage... }
+    "message": "Stage updated successfully",
+    "stage": {
+        "_id": "stage_id",
+        "stageNumber": 1,
+        "name": "Basic Setup",
+        "description": "Initial project setup",
+        "defaultGithubRepo": "project-starter",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -982,6 +1032,17 @@ Get specific project with notes and prerequisites.
             "_id": "curriculum_id",
             "name": "curriculum name",
             "owner": "user_id",
+            "description": "curriculum description",
+            "resources": [
+                {
+                    "_id": "resource_id",
+                    "name": "resource name",
+                    "type": "documentation",
+                    "link": "https://example.com",
+                    "createdAt": "timestamp",
+                    "updatedAt": "timestamp"
+                }
+            ],
             "levels": [
                 {
                     "_id": "level_id",
@@ -1006,16 +1067,8 @@ Get specific project with notes and prerequisites.
                     "updatedAt": "timestamp"
                 }
             ],
-            "resources": [
-                {
-                    "_id": "resource_id",
-                    "name": "resource name",
-                    "type": "documentation",
-                    "link": "https://example.com",
-                    "createdAt": "timestamp",
-                    "updatedAt": "timestamp"
-                }
-            ]
+            "createdAt": "timestamp",
+            "updatedAt": "timestamp"
         },
         "prerequisites": [
             {
@@ -1081,8 +1134,51 @@ Update project details.
 
 ```json
 {
-  "message": "Project updated successfully",
-  "project": { ...updated project with full population... }
+    "message": "Project updated successfully",
+    "project": {
+        "_id": "project_id",
+        "name": "project name",
+        "description": "description",
+        "identifier": "R1",
+        "topics": ["topic1", "topic2"],
+        "githubRepo": "repository-name",
+        "state": "not_started",
+        "stage": 1,
+        "order": 1,
+        "curriculum": {
+            "_id": "curriculum_id",
+            "name": "curriculum name",
+            "owner": "user_id",
+            "description": "curriculum description",
+            "resources": [],
+            "levels": [],
+            "stages": [],
+            "createdAt": "timestamp",
+            "updatedAt": "timestamp"
+        },
+        "prerequisites": [
+            {
+                "_id": "prerequisite_id",
+                "name": "prerequisite name",
+                "description": "description",
+                "identifier": "P1",
+                "state": "completed",
+                "stage": 1
+            }
+        ],
+        "projectResources": [],
+        "notes": [
+            {
+                "_id": "note_id",
+                "type": "reflection",
+                "content": "content",
+                "createdAt": "timestamp",
+                "updatedAt": "timestamp"
+            }
+        ],
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -1161,8 +1257,15 @@ Update a project resource.
 
 ```json
 {
-  "message": "Project resource updated successfully",
-  "projectResource": { ...updated resource... }
+    "message": "Project resource updated successfully",
+    "projectResource": {
+        "_id": "resource_id",
+        "name": "resource name",
+        "type": "type",
+        "link": "url",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -1297,8 +1400,15 @@ Update note type or content.
 
 ```json
 {
-  "message": "Note updated successfully",
-  "note": { ...updated note... }
+    "message": "Note updated successfully",
+    "note": {
+        "_id": "note_id",
+        "type": "type",
+        "content": "content",
+        "project": "project_id",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+    }
 }
 ```
 
@@ -1453,6 +1563,7 @@ The curriculum organization follows a hierarchical structure:
 -   Level orders must be unique within a curriculum
 -   Stage ranges cannot overlap between levels in the same curriculum
 -   Stage end must be greater than or equal to stage start
+-   Default identifiers can contain letters, numbers, underscores, and hyphens
 
 **Stage Validation Rules:**
 

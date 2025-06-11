@@ -55,6 +55,19 @@ const levelSchema = new mongoose.Schema(
             trim: true,
             maxlength: [500, "Level description cannot exceed 500 characters"],
         },
+        defaultIdentifier: {
+            type: String,
+            trim: true,
+            maxlength: [10, "Default identifier cannot exceed 10 characters"],
+            validate: {
+                validator: function (v) {
+                    if (!v) return true;
+                    return /^[a-zA-Z0-9_-]+$/.test(v);
+                },
+                message:
+                    "Default identifier can only contain letters, numbers, underscores, and hyphens",
+            },
+        },
         stageStart: {
             type: Number,
             required: [true, "Stage start is required"],
@@ -83,6 +96,44 @@ const levelSchema = new mongoose.Schema(
     }
 );
 
+const stageSchema = new mongoose.Schema(
+    {
+        stageNumber: {
+            type: Number,
+            required: [true, "Stage number is required"],
+            min: [1, "Stage number must be at least 1"],
+        },
+        name: {
+            type: String,
+            trim: true,
+            maxlength: [100, "Stage name cannot exceed 100 characters"],
+        },
+        description: {
+            type: String,
+            trim: true,
+            maxlength: [500, "Stage description cannot exceed 500 characters"],
+        },
+        defaultGithubRepo: {
+            type: String,
+            trim: true,
+            maxlength: [
+                100,
+                "Default GitHub repo cannot exceed 100 characters",
+            ],
+            validate: {
+                validator: function (v) {
+                    if (!v) return true;
+                    return /^[a-zA-Z0-9._-]+$/.test(v);
+                },
+                message: "Repository name contains invalid characters",
+            },
+        },
+    },
+    {
+        timestamps: true,
+    }
+);
+
 const curriculumSchema = new mongoose.Schema(
     {
         name: {
@@ -103,6 +154,7 @@ const curriculumSchema = new mongoose.Schema(
         },
         resources: [resourceSchema],
         levels: [levelSchema],
+        stages: [stageSchema],
         projects: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -117,5 +169,6 @@ const curriculumSchema = new mongoose.Schema(
 
 curriculumSchema.index({ "levels.order": 1 });
 curriculumSchema.index({ "levels.stageStart": 1, "levels.stageEnd": 1 });
+curriculumSchema.index({ "stages.stageNumber": 1 });
 
 module.exports = mongoose.model("Curriculum", curriculumSchema);
