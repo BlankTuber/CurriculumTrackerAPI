@@ -117,7 +117,16 @@ Get current user information and statistics.
         "updatedAt": "timestamp"
     },
     "stats": {
-        "curriculaCount": 5
+        "curriculaCount": 5,
+        "totalProjects": 15,
+        "completedProjects": 8,
+        "inProgressProjects": 4,
+        "notStartedProjects": 3,
+        "totalNotes": 25,
+        "totalLevels": 3,
+        "totalStages": 8,
+        "totalResources": 12,
+        "completionPercentage": 53
     }
 }
 ```
